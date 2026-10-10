@@ -195,8 +195,10 @@ async fn register_agent(
         .at(OBJECT_PATH, agent)
         .await?;
 
-    let session = LogindSessionProxy::new(system_connection).await?;
-    let session_id = session.id().await?;
+    let session_id = {
+        let ctx = libsession_rs::Context::connect().unwrap();
+        ctx.get_session().unwrap().id().unwrap()
+    };
 
     let mut subject_details = HashMap::new();
     subject_details.insert("session-id", session_id.into());

@@ -90,10 +90,11 @@
         };
 
         devShells.default = craneLib.devShell {
-          inputsFrom = [ cosmic-osd ];
+          # Avoid evaluating Cargo dependency vendoring just to enter the shell.
+          inherit (pkgDef) buildInputs;
           LD_LIBRARY_PATH = pkgs.lib.makeLibraryPath pkgDef.buildInputs;
 
-          packages = with pkgs; [ rust-analyzer ];
+          packages = pkgDef.nativeBuildInputs ++ [ pkgs.rust-analyzer ];
         };
       }
     );
